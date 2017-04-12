@@ -1,0 +1,71 @@
+<html>
+  <head>
+    <title>Leap JavaScript Sample</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="leap.min.js"></script>
+    <script src="leap-plugins-0.1.12.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script>// JavaScript code goes here
+      // Setup Leap loop with frame callback function
+
+
+var recognition = new webkitSpeechRecognition();
+recognition.onresult = function(event) { 
+  console.log(event) 
+
+}
+recognition.start();
+console.log("recognition");
+      var controllerOptions = {};
+window.handHoldDemoCursor = $('#screen-position-demo .cursor');
+window.handHoldDemoOutput = $('#screen-position-demo .output')
+
+// MAIN GAME LOOP
+// Called every time the Leap provides a new frame of data
+Leap.loop({ frame: function(frame) {
+  console.log(frame);
+  var hand;
+  if (hand = frame.hands[0]){
+    $("#leapCursor").css({
+         left: hand.screenPosition()[0] + 'px',
+         top: hand.screenPosition()[1] + 800+ 'px'
+    });
+     // handHoldDemoOutput.html("[<br/>&nbsp;&nbsp;" + (hand.screenPosition()[0]) +
+     //    "        <br/>&nbsp;&nbsp;" + (hand.screenPosition()[1]) +
+     //    "        <br/>&nbsp;&nbsp;" + (hand.screenPosition()[2]) + "<br/>]");
+
+      // return handHoldDemoCursor.css({
+      //   left: hand.screenPosition()[0] + 'px',
+      //   bottom: hand.screenPosition()[1] + 'px'
+      // });
+    }
+  }
+}).use('screenPosition', {positioning: 'absolute'});
+
+
+
+
+    </script>
+
+  </head>
+  <body onload="checkLibrary()">
+    <div id="leapCursor"></div>
+    <div class="wrapper">
+      <img class="sky" src="sky.png">
+      <img class="mtn" src="mountain.png">
+      <img class="ground" src="ground.png">
+    </div>
+    <h1>Leap JavaScript Sample</h1>
+    <div id="main">
+      <h3>Frame data:</h3>
+      <div id="frameData"></div>
+      <div style="clear:both;"></div>
+      <h3>Hand data:</h3>
+      <div id="handData"></div>
+      <div style="clear:both;"></div>
+      <h3>Finger data:</h3>
+      <div id="pointableData"></div>
+      <div style="clear:both;"></div>
+    </div>
+  </body>
+</html>
