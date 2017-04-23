@@ -1,0 +1,310 @@
+      $red: #A3334A;
+      $orange: #D17A2D;
+      $yellow: #DFBB39;
+      $green: #547C4B;
+      $blue: #4B798D;
+      $purple: #6B4D8F;
+      $white: #E4E0E9;
+      $brown: #5C4B3D;
+      $black: #3A383E;
+      #leapCursor{
+        width:28px;
+        height:28px;
+        /*background-color:black;*/
+        position:absolute;
+        border-color:white;
+        border-style:solid;
+        border-width:3px;
+        border-radius:30px;
+        z-index:101;
+      }
+      body{
+        position:relative;
+        margin:0px;
+        width:100vw;
+        height:100%;
+        overflow:hidden;
+      }
+      .wrapper{
+      	width:800px;
+      	height:600px;
+      	position:relative;
+      	/*margin:auto;*/
+      	overflow:hidden;
+        width:100%;
+        height:100%;
+      }
+      .wrapper img, .wrapper .sky, .wrapper .ground{
+      	position:absolute;
+
+
+      }
+
+
+      .sky{
+      	      	width:100%;
+      	height:100%;
+      	      	left:0px;
+      	top:0px;
+        background-position: center;
+        background-size:cover;
+      }
+
+      .ground{
+        width: 100%;
+      height: auto;
+      left: 0px;
+      /* top: 0px; */
+      bottom: 0px;
+      height:100%;
+      }
+
+      .ground{
+      	z-index:2;
+        background-position: center;
+        background-position: center bottom;
+        background-size: cover
+      }
+      .sky{
+      	z-index:-2;
+      }
+      .tree{
+      	z-index:4;
+      }
+      .mountain{
+      	z-index:1;
+      }
+      .cloud{
+      	z-index:3;
+      }
+      .mountain{
+      	width:600px;
+      	height:auto;
+      	top:250px;
+
+      }
+      .highlighted{
+        filter:drop-shadow(0px 0px 10px yellow);
+      }
+      /*Colored elements*/
+      .mountain.red{
+        filter: hue-rotate(154deg);
+      }
+      .mountain.red.highlighted{
+        filter: hue-rotate(154deg) drop-shadow(0px 0px 10px yellow);
+      }
+      .mountain.orange{
+        filter: hue-rotate(182deg);
+      }
+      .mountain.orange.highlighted{
+        filter: hue-rotate(182deg) drop-shadow(0px 0px 10px yellow);
+      }
+      .mountain.yellow{
+        filter: hue-rotate(215deg);
+      }
+      .mountain.yellow.highlighted{
+        filter: hue-rotate(215deg) drop-shadow(0px 0px 10px yellow);
+      }
+      .mountain.green{
+        filter: hue-rotate(263deg);
+      }
+      .mountain.green.highlighted{
+        filter: hue-rotate(263deg) drop-shadow(0px 0px 10px yellow);
+      }
+      .mountain.blue{
+         filter:hue-rotate(0deg);
+      }
+      .mountain.blue.highlighted{
+         filter:hue-rotate(0deg) drop-shadow(0px 0px 10px yellow);
+      }
+      .mountain.purple{
+         filter:hue-rotate(64deg);
+      }
+      .mountain.purple.highlighted{
+         filter:hue-rotate(64deg) drop-shadow(0px 0px 10px yellow);
+      }
+      .mountain.black{
+        filter: brightness(43%);
+      }
+      .mountain.black.highlighted{
+        filter: brightness(43%) drop-shadow(0px 0px 10px yellow);
+      }
+      .mountain.white{
+        filter: sepia(63%);
+      }
+      .mountain.white.highlighted{
+        filter: sepia(63%) drop-shadow(0px 0px 10px yellow);
+      }
+      .mountain.brown{
+        filter: sepia(96%) brightness(55%);
+      }
+      .mountain.brown.highlighted{
+        filter: sepia(96%) brightness(55%) drop-shadow(0px 0px 10px yellow);
+      }
+      .tree.red{
+        filter: saturate(100%) brightness(100%) hue-rotate(268deg);
+      }
+      .tree.red.highlighted{
+        filter: saturate(100%) brightness(100%) hue-rotate(268deg) drop-shadow(0px 0px 10px yellow);
+      }
+      .tree.orange{
+        filter: saturate(100%) brightness(141%) hue-rotate(286deg);
+      }
+      .tree.orange.highlighted{
+        filter: saturate(100%) brightness(141%) hue-rotate(286deg) drop-shadow(0px 0px 10px yellow);
+      }
+      .tree.yellow{
+        filter: saturate(100%) brightness(232%) hue-rotate(307deg);
+      }
+      .tree.yellow.highlighted{
+        filter: saturate(100%) brightness(232%) hue-rotate(307deg) drop-shadow(0px 0px 10px yellow);
+      }
+      .tree.green{
+
+      }
+      .tree.green.highlighted{
+
+      }
+      .tree.blue{
+        filter: saturate(100%) brightness(100%) hue-rotate(453deg);
+      }
+      .tree.blue.highlighted{
+        filter: saturate(100%) brightness(100%) hue-rotate(453deg) drop-shadow(0px 0px 10px yellow);
+      }
+      .tree.purple{
+        filter: saturate(100%) brightness(100%) hue-rotate(537deg);
+      }
+      .tree.purple.highlighted{
+        filter: saturate(100%) brightness(100%) hue-rotate(537deg) drop-shadow(0px 0px 10px yellow);
+      }
+      .tree.brown{
+
+      }
+      .tree.brown.highlighted{
+
+      }
+      .tree.white{
+
+      }
+      .tree.white.highlighted{
+
+      }
+      .tree.black{
+            filter: saturate(100%) sepia(40%) brightness(40%);
+      }
+      .tree.black.highlighted{
+            filter: saturate(100%) sepia(40%) brightness(40%) drop-shadow(0px 0px 10px yellow);
+      }
+      .cloud.red{
+
+      }
+      .cloud.orange{
+
+      }
+      .cloud.yellow{
+
+      }
+      .cloud.green{
+
+      }
+      .cloud.blue{
+
+      }
+      .cloud.purple{
+
+      }
+      .cloud.white{
+
+      }
+      .cloud.brown{
+
+      }
+      .cloud.black{
+
+      }
+
+
+
+      .intro{
+      	z-index:100;
+      	display:none;
+      }
+
+      .tree{
+      	height:400px;
+       	height:auto;
+       	
+      }
+
+      .cloud{
+      	width:auto;
+      	height:auto;
+      }
+
+/*      .highlighted{
+      	filter:drop-shadow(0px 0px 10px yellow);
+      }*/
+      .bob{
+    max-width: 20%;
+    max-height: 90px;
+    height: auto;
+    top: 20%;
+    right: 20px;
+    position: absolute;
+    /* padding: 40px; */
+    z-index: 10;
+
+      }
+      .bobText{
+    width: 80%;
+    width: -webkit-calc(100% - 100px);
+    float: left;
+        text-align: center;
+    line-height: 2;
+
+      }
+      .bottomWrapper{
+    background-color: #231D2D;
+    /*background-color: rgb(134, 158, 136);*/
+    box-shadow:0px 2px 3px rgba(0,0,0,.25);
+    width:80%;
+    max-width: 810px;
+    height: auto;
+    min-height:65px;
+    position: absolute;
+    bottom: 40px;
+    margin: auto;
+    /* left: 40px; */
+    left: 0px;
+    right: 0px;
+    padding: 40px;
+    border-radius: 5px;
+    color: white;
+    font-family: Avenir;
+
+      }
+
+      .info{
+      	z-index: 15;
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+
+      }
+      .speechBar{
+      	position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    /* margin: auto; */
+    width: 800px;
+    width:100%;
+    text-align: center;
+    padding: 15px 0px;
+    font-family: avenir;
+    color: white;
+    z-index:50;
+        background-color: rgba(0,0,0,.5);
+    
+      }
