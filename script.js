@@ -9,6 +9,98 @@ var handInFrame = false;
 var gameStarted = true;
 var introState = 0;
 var firstTimestamp;
+var cursorPosition = {x:0,y:0};
+
+var horizonLine = 360;
+
+//Selected Element is object of highlighted element
+var selectedElement = null;
+
+var currentColor = null;
+var assets = {
+  tree: {width:124,height:281,src:"tree.png"},
+  mountain: {width:600,height:287/969*600,src:"mountain.png"},
+  cloud: {width:562,height:191,src:"cloud.png"}
+};
+
+
+var moveImg = new Image();
+moveImg.className = "moveArrows";
+moveImg.src = "move-icon.png";
+//Color name is string of target color you want to change to "yellow", etc.
+var changeBrushColor = function(colorName){
+  currentColor = colorName;
+  $("#leapCursor").css("background-color",colorPalette[colorName]);
+
+}
+
+//boolean function, tells if coordinates are within bounds of element
+var coordinatesWithinElement = function(x,y,element){
+  var withinBounds = false;
+  var divRect = $(element).offset();
+  if(x>= divRect.left && x <= divRect.left+$(element).width() &&
+                      y >= divRect.top && y <= divRect.top+$(element).height() ){
+      withinBounds = true;
+  }
+  return withinBounds;
+};
+
+//returns list of elements that are within coordinates, with  jquery Filter
+var getElementsWithinCoordinates = function(x,y,elementFilter){
+  var possibleElements = $(elementFilter);
+  var elementsWithinBounds = [];
+  possibleElements.map(function(elementIndex){
+    var element = possibleElements[elementIndex];
+    var divRect = $(element).offset();
+    if(x>= divRect.left && x <= divRect.left+$(element).width() &&
+                        y >= divRect.top && y <= divRect.top+$(element).height() ){
+        elementsWithinBounds.push(element);
+    }
+  });
+  return elementsWithinBounds;
+};
+
+//Move all elements in list according to cursor position (x,y)
+var moveElements = function(elementsList,x,y){
+ elementsList.map(function(elementIndex){
+  var element = elementsList[elementIndex];
+  var containingDiv = $(element).parent();
+  console.log(element);
+  console.log($(element).parent());
+  if ($(element).hasClass("tree")){
+    containingDiv.addClass("treeWrapper");
+    var horizonDist = y-horizonLine;
+    var scale;
+    console.log("TREE FOLLOW CURSOR");
+    console.log(horizonDist);
+    if (horizonDist > 0){
+      scale = .01*horizonDist;
+      $(containingDiv).css("left",x-assets.tree.width/2*scale+"px");
+      element.style.height = assets.tree.height*scale+"px";
+      $(containingDiv).css("top", y-assets.tree.height*scale+"px");
+      
+    }
+
+  } else if ($(element).hasClass("mountain")){
+      containingDiv.addClass("mountainWrapper");
+     $(containingDiv).css("left",x-assets.mountain.width/2+"px");
+     console.log("MOUNTAIN FOLLOW CURSOR");
+
+  } else if ($(element).hasClass("cloud")){
+      containingDiv.addClass("cloudWrapper");
+      var horizonDist = horizonLine-y;
+      var scale;
+      if (horizonDist > 0){
+        scale = .01*horizonDist;
+        $(containingDiv).css("left",x-assets.cloud.width/4*scale+"px");
+        element.style.height = assets.cloud.height/2*scale+"px";
+        $(containingDiv).css("top",y-assets.cloud.height/4*scale+"px");
+
+      }
+      console.log("CLOUD FOLLOW CURSOR");
+    }
+ });
+}
 
 // MAIN GAME LOOP
 // Called every time the Leap provides a new frame of data
@@ -27,40 +119,65 @@ Leap.loop({ frame: function(frame) {
         if(finger.extended) {
           extendedFingers.push(finger);
         }
-  }
-        if (extendedFingers.length){
-
+    }
+    if (extendedFingers.length){
           var position = {
             x: extendedFingers[0].screenPosition()[0],
-            y: extendedFingers[0].screenPosition()[1] + 800
+            y: extendedFingers[0].screenPosition()[1] + 500
           };
 
           $("#leapCursor").css({
-           left: position.x + 'px',
-           top: position.y + 'px'
+           left: (position.x - $("#leapCursor").width()/2)+ 'px',
+           top: (position.y - $("#leapCursor").height()/2) + 'px'
           });
-        }
+          cursorPosition = {
+           left: position.x ,
+           top: position.y
+          };
+
+          var movableElements = $(".movable");
+          if (movableElements.length){
+            moveElements(movableElements,cursorPosition.left,cursorPosition.top);
+            console.log("MOVING THE ITEM!");
+          }
+          
+          if (coordinatesWithinElement(position.x,position.y,$(".bob")[0])){
+            $(".bob").addClass("hover");
+          } else{
+             $(".bob").removeClass("hover");
+          }
+
+          if (coordinatesWithinElement(position.x,position.y,$(".palette")[0])){
+            $(".palette").addClass("hover");
+          } else{
+             $(".palette").removeClass("hover");
+          }
+          var paletteList = getElementsWithinCoordinates(position.x,position.y,".palette-color:not(.big)");
+          if (paletteList.length){
+            var hoverColor = paletteList[0];
+            // $(hoverColor).addClass("hover");
+            // $('')
+            var currentClass = $(hoverColor).attr("class");
+            var classes = currentClass.split(" ");
+            var newClass;
+            if (classes.length == 2){
+              var color = classes[1];
+              newClass = "."+classes[0]+"."+color+".big";
+              changeBrushColor(color);
+            }
+            $(newClass).addClass('show');
+            console.log("NEW CLASS"+ newClass);
+          } else{
+            $(".big").removeClass("show");
+          }
+
+    }
       //User begins pointing, change text
       if (introState == 0 && gameStarted){
         introState = 1;
-        $(".bobText").html("Try painting a mountain in the horizon. While you're pointing, you can do this by saying:<br> <b>PUT A MOUNTAIN THERE. </b>");
+        $(".bobText").html("Great! Now that you're exploring the range of your canvas, try painting a mountain by pointing at the horizon and saying:<br><span class='command'>PAINT A MOUNTAIN THERE. </span>");
       }
-      // $("#leapCursor").css({
-      //      left: extendedFingers[0].screenPosition()[0] + 'px',
-      //      top: extendedFingers[0].screenPosition()[1] + 800+ 'px'
-      // });
-      // $("#leapCursor").css({
-      //      left: hand.screenPosition()[0] + 'px',
-      //      top: hand.screenPosition()[1] + 800+ 'px'
-      // });
-      // var position = {
-      //   x: hand.screenPosition()[0],
-      //   y: hand.screenPosition()[1] + 800
-      // };
-      // $("#leapCursor").css({
-      //      left: position.x + 'px',
-      //      top: position.y + 'px'
-      // });
+
       //Update frame queue
       frameQueue.push([position,t]);
       if (frameQueue.length >= 200){
@@ -76,7 +193,8 @@ recognizer.lang = "en";
 recognizer.continuous = true;
 recognizer.interimResults = true;
 recognizer.start();
-var vocab = ["put","this","move","make","paint","mountain","tree","there","here","poetry","but",'that','bear','cloud','iCloud','McCloud','crowd','cloudy','clown','start',"red","orange","yellow","green","blue","purple","violet","brown","white","black"];
+var vocab = ["put","Peachtree","petri","this","fair","move","make","paint","mountain","intermountain","tree","there","here","poetry","but",'that','bear','cloud','iCloud','McCloud','crowd','cloudy','clown','start',"red","orange","yellow","green","blue","purple","violet","brown","white","black"];
+var soundsLikeThere = ["there","here","bear","trailer","fair"];
 var colorPalette = {
       "red": "#A3334A",
       "orange": "#D17A2D",
@@ -167,61 +285,77 @@ var getPositionFromTime = function(list,value){
 
 }
 
-var horizonLine = 360;
-//Selected Element is object of highlighted element
-var selectedElement = null;
-// var vocab = ["put","but","make","paint","mountain","tree","there","here","poetry",'that','bear','cloud','iCloud','start','them','out','in'];
 
-var currentColor = null;
-var assets = {
-  tree: {width:124,height:281,src:"tree.png"},
-  mountain: {width:600,height:287/969*600,src:"mountain.png"},
-  cloud: {width:562,height:191,src:"cloud.png"}
-};
+
+
 
 
 //Function for making new tree, takes in position object
 var makeNewTree = function(position){
     var containingDiv = document.createElement('div');
+    containingDiv.className = "elementWrapper treeWrapper";
     var treeImg = new Image();
-    treeImg.className = "tree element";
+
     if (currentColor != null){
       treeImg.className = "tree element "+ currentColor;
+    } else{
+      treeImg.className = "tree element "+ "green";
     }
     treeImg.src = assets.tree.src;
     var horizonDist = position.y-horizonLine;
     var scale;
     if (horizonDist > 0){
       scale = .01*horizonDist;
-      treeImg.style.left = position.x-assets.tree.width/2*scale+"px";
+      containingDiv.style.left = position.x-assets.tree.width/2*scale+"px";
       treeImg.style.height = assets.tree.height*scale+"px";
-      treeImg.style.top = position.y-assets.tree.height*scale+"px";
-      //$(containingDiv).append(treeImg);
-      $(".wrapper").append(treeImg);
+      containingDiv.style.top = position.y-assets.tree.height*scale+"px";
+      $(containingDiv).append(treeImg);
+      $(".wrapper").append(containingDiv);
       console.log("PUT A TREE THERE");
+
+    } else {
+      //Alert User that they should put the tree on the ground
+      $(".bobText").html("Why don't you try putting the tree on the ground?");
+      $(".bottomWrapper").removeClass("hidden");
+      setTimeout(function(){ 
+        if (introState > 2){
+          $(".bottomWrapper").addClass("hidden");
+          $(".bobText").html("");
+        }
+      },2000);
     }
 
 };
 
 //Function for making new mountain, takes in position object
 var makeNewMountain = function(position){
+    var containingDiv = document.createElement('div');
+    containingDiv.className = "elementWrapper mountainWrapper";
     var mountainImg = new Image();
-    mountainImg.className = "mountain element";
+    
     if (currentColor != null){
       mountainImg.className = "mountain element "+ currentColor;
+    } else {
+      mountainImg.className = "mountain element" + " blue";
     }
     mountainImg.src = assets.mountain.src;
-    mountainImg.style.left = position.x-assets.mountain.width/2+"px";
-    $(".wrapper").append(mountainImg);
+    containingDiv.style.left = position.x-assets.mountain.width/2+"px";
+    containingDiv.style.top = "250px";
+    $(containingDiv).append(mountainImg);
+    $(".wrapper").append(containingDiv);
 
 };
 
 //Function for making new cloud, takes in position object
 var makeNewCloud = function(position){
+    var containingDiv = document.createElement('div');
+    containingDiv.className = "elementWrapper cloudWrapper";
     var cloudImg = new Image();
     cloudImg.className = "cloud element";
     if (currentColor != null){
       cloudImg.className = "cloud element "+ currentColor;
+    } else {
+      cloudImg.className = "cloud element "+ "white"
     }
     cloudImg.src = assets.cloud.src;
 
@@ -229,20 +363,26 @@ var makeNewCloud = function(position){
     var scale;
     if (horizonDist > 0){
       scale = .01*horizonDist;
-      cloudImg.style.left = position.x-assets.cloud.width/4*scale+"px";
+      containingDiv.style.left = position.x-assets.cloud.width/4*scale+"px";
       cloudImg.style.height = assets.cloud.height/2*scale+"px";
-      cloudImg.style.top = position.y-assets.cloud.height/4*scale+"px";
-      $(".wrapper").append(cloudImg);
+      containingDiv.style.top = position.y-assets.cloud.height/4*scale+"px";
+      $(containingDiv).append(cloudImg);
+      $(".wrapper").append(containingDiv);
+    } else {
+      $(".bobText").html("Why don't you try painting the cloud in the sky?");
+      $(".bottomWrapper").removeClass("hidden");
+      setTimeout(function(){ 
+        if (introState > 2){
+          $(".bottomWrapper").addClass("hidden");
+          $(".bobText").html("");
+        }
+      },2000);
     }
 
 };
 
-//Color name is string of target color you want to change to "yellow", etc.
-var changeBrushColor = function(colorName){
-  currentColor = colorName;
-  $("#leapCursor").css("background-color",colorPalette[colorName]);
 
-}
+
 recognizer.onresult = function(event) {
 
     var transcript = '';
@@ -268,8 +408,14 @@ recognizer.onresult = function(event) {
         // if (containsWord(speechList,"put") || containsWord(speechList,"but")|| containsWord(speechList,"make") || containsWord(speechList,"paint")  || containsWord(speechList,"poetry")){
 
           if(introState ==2){
+            introState++;
             //$(".bottomWrapper").hide();
-            $(".bobText").hide();
+            $(".bobText").html("Looks like you're getting the hang of it! To get help and learn more about what you can paint, point and hover over my picture. Or, just say <span class='command'>HELP</span>.");
+            setTimeout(function(){ 
+              $(".bobText").html("");
+              $(".bottomWrapper").addClass("hidden nonIntro");
+              $(".palette").fadeIn(2000);
+             }, 4000);
           }
 
           //Change color of cursor/paintbrush
@@ -287,46 +433,46 @@ recognizer.onresult = function(event) {
             });
             changeBrushColor(targetColor);  
           }
+          //This is time associated with the word "there", and its similar words. Null if there is not said.
+          var thereTime;
+          soundsLikeThere.map(function(index){
+            if (speechList[soundsLikeThere[index]]!=null){
+              thereTime = speechList[word];
+            }
+          });
           //Create new tree object
-           if (containsWord(speechList,"tree") && (containsWord(speechList,"there") || containsWord(speechList,"here")) || containsWord(speechList,"poetry")){
-              var thereTime = speechList["there"];
+           if (containsWords(speechList,["tree","petri","peachtree"]) && (containsWords(speechList,soundsLikeThere)) || containsWord(speechList,"poetry")){
               var therePosition = getPositionFromTime(frameQueue,thereTime);
               makeNewTree(therePosition);
            }
 
            //Create new mountain
-           if (containsWord(speechList,"mountain") && (containsWord(speechList,"there") ||containsWord(speechList,"here"))){
-              var thereTime = speechList["there"];
+           if (containsWords(speechList,["mountain","intermountain"]) && (containsWords(speechList,soundsLikeThere))){
+
               var therePosition = getPositionFromTime(frameQueue,thereTime);
               makeNewMountain(therePosition);
               //After user intiaially has put a mountain, change state
               if (introState == 1){
-                introState = 2;
-                $(".bobText").html("Now, try making a <b>CLOUD</b> or a <b>TREE</b> in a similar way. Have fun!");
+                introState++;
+                $(".bobText").html("Fantastic. You can also paint other items, too. Try painting a <span class='command'>TREE</span> on the ground or a <span class='command'>CLOUD</span> in the sky the same way you did with the mountain.");
               }
            }
-
           //Create new cloud
-           if (containsWord(speechList,"cloud") && (containsWord(speechList,"there") ||containsWord(speechList,"here")||containsWord(speechList,"bear"))){
-              var thereTime = speechList["there"];
+           if (containsWord(speechList,"cloud") && (containsWords(speechList,soundsLikeThere))){
               var therePosition = getPositionFromTime(frameQueue,thereTime);
               makeNewCloud(therePosition);
            }
-
         // } //End of if say put, but, make
-        if (containsWord(speechList,"there")){
+        if (containsWords(speechList,soundsLikeThere)){
+
               console.log("entering PUT THAT THERE CODE");
               if (selectedElement != null){
-                //Create a copy of selected element
-
                 //Element is a tree
                 if($(selectedElement).hasClass("tree")){
-                    var thereTime = speechList["there"];
                     var therePosition = getPositionFromTime(frameQueue,thereTime);
                     makeNewTree(therePosition);
                 }
                 if ($(selectedElement).hasClass("mountain")){
-                  var thereTime = speechList["there"];
                   var therePosition = getPositionFromTime(frameQueue,thereTime);
                   makeNewMountain(therePosition);
                 }
@@ -334,12 +480,13 @@ recognizer.onresult = function(event) {
                 //Create new cloud
                 if ($(selectedElement).hasClass("cloud")){
                   //Find the time of the "there word"
-                  var thereTime = speechList["there"];
                   var therePosition = getPositionFromTime(frameQueue,thereTime);
                   makeNewCloud(therePosition);
                 }
                 $(selectedElement).hide();
                 selectedElement = null;
+                $(".moveArrows").remove();
+                $(".element").removeClass("movable");
               }
            }
         }
@@ -382,6 +529,8 @@ recognizer.onresult = function(event) {
                     selectedElement = thisElement;
                   }
                 });
+                var selectedParent = $(selectedElement).parent();
+                $(selectedParent).append(moveImg);
                 //Determine which color selectedElement has
                 var targetColor = null;
                 colorNames.map(function(item){
@@ -391,11 +540,12 @@ recognizer.onresult = function(event) {
                 });
                 if (targetColor !=null){
                   changeBrushColor(targetColor);
-                }
+                } 
                 $(".element").removeClass("highlighted");
                 $(selectedElement).addClass("highlighted");
-                // var prevFilter = $(selectedElement).css("filter");
-                // $(selectedElement).css(prevFilter+ " "+drop-shadow(0px 0px 10px yellow));
+
+                //MAKE THIS SELECTED ELEMENTED MOVABLE
+                $(selectedElement).addClass("movable");
               }
             }
             
@@ -414,14 +564,12 @@ recognizer.onresult = function(event) {
         //$(".recentSpeech").html(final_transcript);
         if(gameStarted==true){
           $(".speechBar").html("<b>What we think you said:<br></b>"+final_transcript);
-          // console.log("FINAL TRANSCRIPT: "+ final_transcript);
         }
       
       } else {
         interim_transcript += event.results[i][0].transcript;
         if(gameStarted==true){
           $(".speechBar").html("<b>What we think you said:<br></b>"+interim_transcript);
-          // console.log("FINAL TRANSCRIPT: "+ final_transcript);
         }
       }
     }
