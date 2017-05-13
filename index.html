@@ -12,7 +12,7 @@
 <!--   <body onload="checkLibrary()"> -->
     <div id="leapCursor"></div>
     <div class="info">
-    <div class="palette hover" style="background-image:url('palette.png')">
+    <div class="palette hover" style="background-image:url('palette2.png')">
       <div class="palette-color red"></div>
       <div class="palette-color orange"></div>
       <div class="palette-color yellow"></div>
@@ -23,7 +23,7 @@
       <div class="palette-color white"></div>
       <div class="palette-color black"></div>
 
-      <div class="palette-color big red"></div>
+     <!--  <div class="palette-color big red"></div>
       <div class="palette-color big orange"></div>
       <div class="palette-color big yellow"></div>
       <div class="palette-color big green"></div>
@@ -31,17 +31,47 @@
       <div class="palette-color big purple"></div>
       <div class="palette-color big brown"></div>
       <div class="palette-color big white"></div>
-      <div class="palette-color big black"></div>
+      <div class="palette-color big black"></div> -->
     </div>
        
        <div class="bottomWrapper">
          <span class="bobText">Welcome! I'm Bob Ross and this is your canvas. I've already set up the background and sky for you! <br>Let's learn how to add more to the painting. Start by pointing a finger at the screen. </span>
          <img class="bob" src="bob-icon.png">
-         <div class="helpTag">HELP</div>
+         <div class="helpTag"><span class="help-hover">Say </span>HELP<span class="help-hover"> to open help pane</span></div>
        </div>
-    </div>
+       
+       <div class="help-popup">
+       <div class="popup-wrapper">
+       <div class="popup-exit">Say <span class="command">EXIT</span> to close out of help.</div>
+       <h2>Help and Hints</h2>
+       <h3>HOW TO PAINT AN ITEM</h3>
+       Point at the canvas where you want the item placed and say: <span class="command">PAINT A<div class="tag inline">[item name]</div> HERE</span>".
+       <h3>HERE'S WHAT ITEMS YOU CAN PAINT</h3>
+       <div class="thumb-wrapper">
+        <img src="mountain.png" class="thumb">
+        <div class="tag">mountain</div>
+       </div>
+       <div class="thumb-wrapper">
+        <img src="tree.png" class="thumb">
+        <div class="tag">tree</div>
+       </div>
+        <div class="thumb-wrapper">
+        <img src="cloud.png" class="thumb">
+        <div class="tag">cloud</div>
+       </div>
+       <h3>MOVING AN ITEM</h3>
+        Say <span class="command">MOVE THAT</span> while pointing at an item. Once selected, point to its new location and say <span class="command">HERE</span> .
+        <!-- <h3>DELETING AN ITEM</h3> -->
+        <!-- Say <span class="command">DELETE</span> while pointing at an item. -->
+       <h3>CHANGING COLORS</h3>
+       Say the name of the color you want to choose from, or use the color palette at the bottom of the screen.
+       </div>
+       </div>
+  </div>
    
     <div class="wrapper">
+    <div class="thereDot"></div>
+    <div class="horizon-line"></div>
       <div class="sky" style="background-image:url('sky2.png')"></div>
       <!-- <img class="sky" src="sky2.png"> -->
       <!-- <img class="mtn" src="mountain.png"> -->

@@ -7,6 +7,9 @@
       $white: #E4E0E9;
       $brown: #5C4B3D;
       $black: #3A383E;
+
+      $helpbackground: #231D2D;
+      $helpaccent: #8D7D99;
       #leapCursor{
         width:28px;
         height:28px;
@@ -33,6 +36,83 @@
       	overflow:hidden;
         width:100%;
         height:100%;
+      }
+      .thumb-wrapper{
+        width:160px;
+        height:120px;
+        margin:10px;
+        display:inline-block;
+        position:relative;
+        .tag{
+        bottom:0px;
+        width:90%;
+        position:absolute;
+        }
+
+      }
+      .tag{
+
+        padding:5px 10px;
+        color: white;
+        background-color: $helpaccent;
+        border-radius:5px;
+        text-align:center;
+
+      }
+      .tag.inline{
+        display:inline;
+        padding:5px 30px;
+        margin:0px 10px;
+      }
+
+      h3{
+        font-size:16px;
+        color:$helpaccent;
+      }
+
+      .thumb{
+        max-width:100%;
+        max-height:-webkit-calc(100% - 60px);
+        width:auto;
+        height:auto;
+        display:inline-block;
+        margin:auto;
+        position:absolute;
+        left:0px;
+        right:0px;
+        bottom:0px;
+        top:0px;
+      }
+      .popup-exit{
+        position:absolute;
+        top:40px;
+        right:40px;
+      }
+      .help-popup{
+        position:relative;
+        background-color: $helpbackground;
+        box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.25);
+        width: 80%;
+        max-width: 900px;
+        height: 80%;
+        min-height: 65px;
+        position: absolute;
+        left:0; right:0; bottom:0; top:0;
+        margin:auto;
+        padding: 40px;
+        border-radius: 5px;
+        color: white;
+        font-family: Avenir;
+        transition: .6s all;
+        opacity: 1;
+        z-index:100;
+        display:none;
+      }
+      .popup-wrapper{
+        width:100%;
+        max-width:800px;
+        margin:auto;
+        line-height:1.5;
       }
       .wrapper .elementWrapper, .wrapper .sky, .wrapper .ground{
       	position:absolute;
@@ -283,9 +363,9 @@
       	height:auto;
       }
 
-/*      .highlighted{
+      .highlighted{
       	filter:drop-shadow(0px 0px 10px yellow);
-      }*/
+      }
       .bob{
     width:90px;
     height: 90px;
@@ -298,10 +378,11 @@
     transition: .6s all;
 
       }
-      .bob.hover{
+/*      .bob.hover{
         width:150px;
         height:150px;
-      }
+      }*/
+
       .bobText{
     width: 80%;
     width: -webkit-calc(100% - 100px);
@@ -310,38 +391,54 @@
     line-height: 2;
 
       }
+/*      .horizon-line{
+        z-index:9999;
+        border-top: 2px solid yellow;
+        width:1000px;
+        position:absolute;
+      }*/
 
       .palette-color {
-    width: 40px;
-    height: 50px;
-    /*background-color: grey;*/
-    position: absolute;
-    /*margin: 0px 4px;*/
+    width: 80px;
+
+    display: inline-block;
+    height: 106px;
+    /* background-color: grey; */
+    /* position: absolute; */
+    margin: 0px 2px;
     border-radius: 100px;
-    box-shadow: 2px 2px 4px rgba(0,0,0,.55);
-    margin-top: 37px;
-    transition:.6s all;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.55);
+    margin-top: 18px;
+    /*transition: .6s all;*/
         }
-        .palette-color.big{
+        .palette-color:hover{
+          width:60px;
+          border:solid 2px white;
+
+        }
+/*        .palette-color.big{
           width:70px;
           height:80px;
           display:none;
 
-        }
-        .palette-color.big.show{
+        }*/
+/*        .palette-color.big.show{
           display:block;
-        }
+        }*/
       .palette{
-        display:none;
-        width: 400px;
-        height: 160;
-        background-size: 100%;
-        background-repeat: no-repeat;
-        position: absolute;
-        bottom: -100px;
-        right: 190px;
-        text-align:center;
-        transition:.6s all;
+    display: none;
+    width: 900px;
+    height: 94px;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    position: absolute;
+    bottom: -40px;
+    /* right: 190px; */
+    left: 0px;
+    right: 0px;
+    margin: auto;
+    text-align: center;
+    transition: .6s all;
         .red{
           background-color:$red;
               left: 19px;
@@ -351,62 +448,61 @@
         }
         .orange{
           background-color:$orange;
-              left: 49px;
+/*              left: 49px;
     right: auto;
-    bottom: 46px;
+    bottom: 46px;*/
         }
         .yellow{
 background-color:$yellow;
-    left: 91px;
+/*    left: 91px;
     right: auto;
-    bottom: 71px;
+    bottom: 71px;*/
         }
         .green{
 background-color:$green;
-    left: 136px;
+/*    left: 136px;
     right: auto;
-    bottom: 86px;
+    bottom: 86px;*/
         }
         .blue{
 background-color:$blue;
-left: 0;
+/*left: 0;
     right: 0px;
     top: 15px;
-    margin: auto;
+    margin: auto;*/
         }
         .purple{
 background-color:$purple;
-    right: 136px;
+/*    right: 136px;
     left: auto;
-    bottom: 86px;
+    bottom: 86px;*/
         }
         .white{
 background-color:$white;
-    right: 91px;
+/*    right: 91px;
     left: auto;
-    bottom: 71px;
+    bottom: 71px;*/
         }
         .brown{
 background-color:$brown;
-    right: 49px;
+/*    right: 49px;
     left: auto;
-    bottom: 46px;
+    bottom: 46px;*/
         }
         .black{
 background-color:$black;
-    right: 19px;
+/*    right: 19px;
     left: auto;
-    bottom: 4px;
+    bottom: 4px;*/
         }
       }
       .palette.hover{
-        bottom:0px;
+        bottom:-25px;
       }
 
 
         .palette-color.hover{
-          width:80px;
-          height:70px;
+          border: solid 3px white;
         }
       .bottomWrapper{
     background-color: #231D2D;
@@ -431,7 +527,7 @@ background-color:$black;
 
     .helpTag{
       display:none;
-      width: 90px;
+      width: auto;
       height: auto;
       bottom: -5px;
       text-align: center;
@@ -485,6 +581,19 @@ background-color:$black;
     z-index:50;
         background-color: rgba(0,0,0,.5);
     
+      }
+
+      .thereDot{
+        width:50px;
+        height:50px;
+        background-color:yellow;
+        position:absolute;
+        z-index:9000;
+        display:none;
+      }
+
+      .help-hover{
+        /*display:none;*/
       }
 
       .elementWrapper{

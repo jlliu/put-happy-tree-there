@@ -11,7 +11,12 @@ var introState = 0;
 var firstTimestamp;
 var cursorPosition = {x:0,y:0};
 
-var horizonLine = 360;
+var horizonLine = 380;
+
+$(document).ready(function(){
+  $(".horizon-line").css("top",horizonLine+"px");
+});
+
 
 //Selected Element is object of highlighted element
 var selectedElement = null;
@@ -141,34 +146,36 @@ Leap.loop({ frame: function(frame) {
             console.log("MOVING THE ITEM!");
           }
           
-          if (coordinatesWithinElement(position.x,position.y,$(".bob")[0])){
-            $(".bob").addClass("hover");
-          } else{
-             $(".bob").removeClass("hover");
-          }
+          // if (coordinatesWithinElement(position.x,position.y,$(".bob")[0])){
+          //   $(".help-hover").show();
+          // } else{
+          //    $(".help-hover").hide();
+          // }
 
           if (coordinatesWithinElement(position.x,position.y,$(".palette")[0])){
             $(".palette").addClass("hover");
           } else{
              $(".palette").removeClass("hover");
           }
-          var paletteList = getElementsWithinCoordinates(position.x,position.y,".palette-color:not(.big)");
+          var paletteList = getElementsWithinCoordinates(position.x,position.y,".palette-color");
           if (paletteList.length){
             var hoverColor = paletteList[0];
-            // $(hoverColor).addClass("hover");
-            // $('')
+            $(".palette-color").removeClass("hover");
+            $(hoverColor).addClass("hover");
+
             var currentClass = $(hoverColor).attr("class");
             var classes = currentClass.split(" ");
-            var newClass;
-            if (classes.length == 2){
+            console.log(classes);
+            // var newClass;
+            if (classes.length == 3){
               var color = classes[1];
-              newClass = "."+classes[0]+"."+color+".big";
+              // newClass = "."+classes[0]+"."+color+".big";
               changeBrushColor(color);
             }
-            $(newClass).addClass('show');
-            console.log("NEW CLASS"+ newClass);
+            // $(newClass).addClass('show');
+            // console.log("NEW CLASS"+ newClass);
           } else{
-            $(".big").removeClass("show");
+            // $(".palette-color").removeClass("show");
           }
 
     }
@@ -193,8 +200,8 @@ recognizer.lang = "en";
 recognizer.continuous = true;
 recognizer.interimResults = true;
 recognizer.start();
-var vocab = ["put","Peachtree","petri","this","fair","move","make","paint","mountain","intermountain","tree","there","here","poetry","but",'that','bear','cloud','iCloud','McCloud','crowd','cloudy','clown','start',"red","orange","yellow","green","blue","purple","violet","brown","white","black"];
-var soundsLikeThere = ["there","here","bear","trailer","fair"];
+var vocab = ["delete","exit","close","help","put","select","Peachtree","petri","air","this","fair","move","make","paint","mountain","intermountain","tree","there","here","poetry","but",'that','bear','cloud','iCloud','McCloud','crowd','cloudy','clown','start',"red","orange","yellow","green","blue","purple","violet","brown","white","black"];
+var soundsLikeThere = ["there","here","bear","trailer","fair","hair","air"];
 var colorPalette = {
       "red": "#A3334A",
       "orange": "#D17A2D",
@@ -313,6 +320,17 @@ var makeNewTree = function(position){
       $(".wrapper").append(containingDiv);
       console.log("PUT A TREE THERE");
 
+      if(introState ==2){
+            introState++;
+            //$(".bottomWrapper").hide();
+            $(".bobText").html("Looks like you're getting the hang of it! To get help and learn more about what you can paint say <span class='command'>HELP</span>.");
+            setTimeout(function(){ 
+              $(".bobText").html("");
+              $(".bottomWrapper").addClass("hidden nonIntro");
+              $(".palette").fadeIn(2000);
+             }, 4000);
+      }
+
     } else {
       //Alert User that they should put the tree on the ground
       $(".bobText").html("Why don't you try putting the tree on the ground?");
@@ -324,6 +342,8 @@ var makeNewTree = function(position){
         }
       },2000);
     }
+
+
 
 };
 
@@ -368,6 +388,18 @@ var makeNewCloud = function(position){
       containingDiv.style.top = position.y-assets.cloud.height/4*scale+"px";
       $(containingDiv).append(cloudImg);
       $(".wrapper").append(containingDiv);
+
+
+            if(introState ==2){
+            introState++;
+            //$(".bottomWrapper").hide();
+            $(".bobText").html("Looks like you're getting the hang of it! To get help and learn more about what you can paint, just say <span class='command'>HELP</span>.");
+            setTimeout(function(){ 
+              $(".bobText").html("");
+              $(".bottomWrapper").addClass("hidden nonIntro");
+              $(".palette").fadeIn(2000);
+             }, 4000);
+          }
     } else {
       $(".bobText").html("Why don't you try painting the cloud in the sky?");
       $(".bottomWrapper").removeClass("hidden");
@@ -384,7 +416,6 @@ var makeNewCloud = function(position){
 
 
 recognizer.onresult = function(event) {
-
     var transcript = '';
     var hasFinal = false;
     var time = event.timeStamp;
@@ -404,18 +435,18 @@ recognizer.onresult = function(event) {
         }
 
         if (gameStarted==true){
-                  //This is "making an object mode"
+        //This is "making an object mode"
         // if (containsWord(speechList,"put") || containsWord(speechList,"but")|| containsWord(speechList,"make") || containsWord(speechList,"paint")  || containsWord(speechList,"poetry")){
 
-          if(introState ==2){
-            introState++;
-            //$(".bottomWrapper").hide();
-            $(".bobText").html("Looks like you're getting the hang of it! To get help and learn more about what you can paint, point and hover over my picture. Or, just say <span class='command'>HELP</span>.");
-            setTimeout(function(){ 
-              $(".bobText").html("");
-              $(".bottomWrapper").addClass("hidden nonIntro");
-              $(".palette").fadeIn(2000);
-             }, 4000);
+
+          //Toggle help popup
+          if (containsWord(speechList,"help")){
+            $(".help-popup").show();
+            console.log("HELP POPUP SHOW");
+          }
+          if (containsWords(speechList,["exit","close"])){
+            $(".help-popup").hide();
+            console.log("HELP POPUP EXIT");
           }
 
           //Change color of cursor/paintbrush
@@ -440,6 +471,10 @@ recognizer.onresult = function(event) {
               thereTime = speechList[word];
             }
           });
+          var therePosition1 = getPositionFromTime(frameQueue,thereTime+500);
+          $(".thereDot").css("top",therePosition1.y);
+          $(".thereDot").css("left",therePosition1.x);
+
           //Create new tree object
            if (containsWords(speechList,["tree","petri","peachtree"]) && (containsWords(speechList,soundsLikeThere)) || containsWord(speechList,"poetry")){
               var therePosition = getPositionFromTime(frameQueue,thereTime);
@@ -463,8 +498,9 @@ recognizer.onresult = function(event) {
               makeNewCloud(therePosition);
            }
         // } //End of if say put, but, make
-        if (containsWords(speechList,soundsLikeThere)){
 
+        //PUT THAT THERE CODE: Moves existing object to a new location
+        if (containsWords(speechList,soundsLikeThere)){
               console.log("entering PUT THAT THERE CODE");
               if (selectedElement != null){
                 //Element is a tree
@@ -487,7 +523,10 @@ recognizer.onresult = function(event) {
                 selectedElement = null;
                 $(".moveArrows").remove();
                 $(".element").removeClass("movable");
+                $(".bottomWrapper").addClass("hidden");
+                $(".bobText").html("");
               }
+
            }
         }
 
@@ -517,7 +556,7 @@ recognizer.onresult = function(event) {
                speechList.push([word,time]);
                console.log("PUSHING TO SPEECH LIST");
               //SPECIAL CASE: word we said is "that", in this case we want to instantly highlight
-              if( word == "that" || word == "this"){
+              if( word == "that" || word == "this" || word =="select"){
                 var thatPosition = getPositionFromTime(frameQueue,time);
                 //Iterate through existing painting elements
                 var elements = $(".element");
@@ -529,23 +568,27 @@ recognizer.onresult = function(event) {
                     selectedElement = thisElement;
                   }
                 });
-                var selectedParent = $(selectedElement).parent();
-                $(selectedParent).append(moveImg);
-                //Determine which color selectedElement has
-                var targetColor = null;
-                colorNames.map(function(item){
-                  if ($(selectedElement).hasClass(item)){
-                    targetColor = item;
-                  }
-                });
-                if (targetColor !=null){
-                  changeBrushColor(targetColor);
-                } 
-                $(".element").removeClass("highlighted");
-                $(selectedElement).addClass("highlighted");
+                if (selectedElement != null){
+                    var selectedParent = $(selectedElement).parent();
+                    $(selectedParent).append(moveImg);
+                    //Determine which color selectedElement has
+                    var targetColor = null;
+                    colorNames.map(function(item){
+                      if ($(selectedElement).hasClass(item)){
+                        targetColor = item;
+                      }
+                    });
+                    if (targetColor !=null){
+                      changeBrushColor(targetColor);
+                    } 
+                    $(".element").removeClass("highlighted");
+                    $(selectedElement).addClass("highlighted");
+                    $(".bobText").html("You just selected an item! Point to its new location and say <span class='command'>HERE</span> to place it elsewhere");
+                    $(".bottomWrapper").removeClass('hidden');
+                    //MAKE THIS SELECTED ELEMENTED MOVABLE
+                    $(selectedElement).addClass("movable");
+                }
 
-                //MAKE THIS SELECTED ELEMENTED MOVABLE
-                $(selectedElement).addClass("movable");
               }
             }
             
