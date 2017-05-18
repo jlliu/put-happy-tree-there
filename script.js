@@ -17,10 +17,8 @@ var groundHeight = 350;
 $(document).ready(function(){
   $(".horizon-line").css("top",horizonLine+"px");
   horizonLine = $("body").height()-groundHeight;
-  console.log("Horizon line now:"+horizonLine);
   $( window ).resize(function() {
     horizonLine = $("body").height()-groundHeight;
-    console.log("Horizon line now:"+horizonLine);
   });
 });
 
@@ -45,8 +43,6 @@ var changeBrushColor = function(colorName){
   
   $(".palette-color").removeClass("hover");
   $(".palette-color."+currentColor).addClass("hover");
-
-  console.log("New items will be painted "+currentColor);
   $(".color-change").css("opacity",1);
   $(".color-change").html("New items will be painted "+currentColor);
   $("#leapCursor").css("background-color",colorPalette[colorName]);
@@ -87,14 +83,10 @@ var moveElements = function(elementsList,x,y){
  elementsList.map(function(elementIndex){
   var element = elementsList[elementIndex];
   var containingDiv = $(element).parent();
-  console.log(element);
-  console.log($(element).parent());
   if ($(element).hasClass("tree")){
     containingDiv.addClass("treeWrapper");
     var horizonDist = y-horizonLine;
     var scale;
-    console.log("TREE FOLLOW CURSOR");
-    console.log(horizonDist);
     if (horizonDist > 0){
       scale = .01*horizonDist;
       $(containingDiv).css("left",x-assets.tree.width/2*scale+"px");
@@ -106,7 +98,6 @@ var moveElements = function(elementsList,x,y){
   } else if ($(element).hasClass("mountain")){
       containingDiv.addClass("mountainWrapper");
      $(containingDiv).css("left",x-assets.mountain.width/2+"px");
-     console.log("MOUNTAIN FOLLOW CURSOR");
 
   } else if ($(element).hasClass("cloud")){
       containingDiv.addClass("cloudWrapper");
@@ -119,7 +110,6 @@ var moveElements = function(elementsList,x,y){
         $(containingDiv).css("top",y-assets.cloud.height/4*scale+"px");
 
       }
-      console.log("CLOUD FOLLOW CURSOR");
     }
  });
 }
@@ -134,7 +124,6 @@ Leap.loop({ frame: function(frame) {
     var hand;
     if (hand = frame.hands[0]){
       handInFrame = true;
-      // console.log("HERE IS FINGER");
       var extendedFingers = [];
     for(var f = 0; f < hand.fingers.length; f++){
         var finger = hand.fingers[f];
@@ -160,15 +149,8 @@ Leap.loop({ frame: function(frame) {
           var movableElements = $(".movable");
           if (movableElements.length){
             moveElements(movableElements,cursorPosition.left,cursorPosition.top);
-            console.log("MOVING THE ITEM!");
           }
           
-          // if (coordinatesWithinElement(position.x,position.y,$(".bob")[0])){
-          //   $(".help-hover").show();
-          // } else{
-          //    $(".help-hover").hide();
-          // }
-
           if (coordinatesWithinElement(position.x,position.y,$(".palette")[0])){
             $(".palette").addClass("hover");
           } else{
@@ -243,16 +225,11 @@ var containsWord = function(speechList,string){
 
 //Takes in speechList asses whether one of the words in the stringList is said in speechList
 var containsWords = function(speechList,stringList){
-  console.log("ENTERING CONTAINSWORDS CODE");
-  console.log(speechList,stringList);
   var contains = false;
   //For each word in your speechlist, see if it exists in stringList.
   var containList = speechList.map(function(item){
-    console.log(item[0]);
-      console.log(stringList.indexOf(item[0]));
      if (stringList.indexOf(item[0])>=0){
       contains = true;
-      console.log("STRINGLIST HAS A WORD ");
      }
   });
   return contains;
@@ -287,8 +264,6 @@ var getPositionFromTime = function(list,value){
   var best_index = low;
   while (low <= high){
     mid = Math.floor(low + (high-low)/2);
-    // console.log("mid: "+mid);
-    // console.log(list[mid][0]);
     if (list[mid][1] < value){
       low = mid+1;
     } else if(list[mid][1] > value) {
@@ -304,10 +279,6 @@ var getPositionFromTime = function(list,value){
   return list[best_index][0];
 
 }
-
-
-
-
 
 
 //Function for making new tree, takes in position object
@@ -331,17 +302,15 @@ var makeNewTree = function(position){
       containingDiv.style.top = position.y-assets.tree.height*scale+"px";
       $(containingDiv).append(treeImg);
       $(".wrapper").append(containingDiv);
-      console.log("PUT A TREE THERE");
       randomBrushAudio();
       if(introState ==2){
-            introState++;
-            //$(".bottomWrapper").hide();
-            $(".bobText").html("Looks like you're getting the hang of it! To get help and learn more about what you can paint say <span class='command'>HELP</span>.");
-            setTimeout(function(){ 
-              $(".bobText").html("");
-              $(".bottomWrapper").addClass("hidden nonIntro");
-              $(".palette").fadeIn(2000);
-             }, 4000);
+        introState++;
+        $(".bobText").html("Looks like you're getting the hang of it! To get help and learn more about what you can paint say <span class='command'>HELP</span>.");
+        setTimeout(function(){ 
+          $(".bobText").html("");
+          $(".bottomWrapper").addClass("hidden nonIntro");
+          $(".palette").fadeIn(2000);
+         }, 4000);
       }
 
     } else {
@@ -432,7 +401,6 @@ var makeNewCloud = function(position){
 
 
 var playAudio = function(audioID){
-  console.log("PLAY AUDIO FUNCTION");
   recognizer.stop();
   document.getElementById(audioID).play();
   $("#"+audioID).bind("ended", function(){
@@ -442,21 +410,10 @@ var playAudio = function(audioID){
 };
 
 var randomBrushAudio = function(){
-   //recognizer.stop();
   var num = Math.floor(Math.random() * 3) + 1 ;
   playAudio("brushAudio"+num);
-  // $("#brushAudio"+num).bind("ended", function(){
-  //    recognizer.start();       
-  // });
 };
 
-// var playMountainAudio = function(){
-
-// }
-
-// var mountainAudio = function(){
-
-// }
 
 
 recognizer.onresult = function(event) {
@@ -465,35 +422,24 @@ recognizer.onresult = function(event) {
     var time = event.timeStamp;
     //var speechList = [];
     for (var i = event.resultIndex; i < event.results.length; ++i) {
-      console.log(event.results[i][0]);
-      console.log(time);
       if (event.results[i].isFinal){
-        console.log("FINAL");
 
         //Once you receive the Final transcript, interpret the words
         if (containsWord(speechList,"start")&& gameStarted ==false){
           gameStarted = true;
           $(".intro").hide();
-          console.log("GAME STARTED");
           $(".speechBar").html("");
         }
 
         if (gameStarted==true){
         //This is "making an object mode"
-        // if (containsWord(speechList,"put") || containsWord(speechList,"but")|| containsWord(speechList,"make") || containsWord(speechList,"paint")  || containsWord(speechList,"poetry")){
 
-
-          
           //Mistake audio
           if (containsWords(speechList,["mistake","mistakes","mystic"])){
-            //Mistake audio
-            // document.getElementById("mistakeAudio").play();
-            console.log("MISTAKE!!!!");
             
             //TRIGGER RANDOM ITEM GENERATION
             var thisPosition = getPositionFromTime(frameQueue,time);
             var num = Math.floor(Math.random()*2) + 1 ;
-            console.log("MISTAKE NUM"+num);
             var displace = Math.floor(Math.random()*200)+70;
             if (num == 1){
               makeNewTree({x:thisPosition.x,y:horizonLine+displace});
@@ -506,18 +452,13 @@ recognizer.onresult = function(event) {
           //Toggle help popup
           if (containsWord(speechList,"help")){
             $(".help-popup").show();
-            console.log("HELP POPUP SHOW");
           }
           if (containsWords(speechList,["exit","close"])){
             $(".help-popup").hide();
-            console.log("HELP POPUP EXIT");
           }
 
           //Change color of cursor/paintbrush
-          console.log("THIS IS SPEECHLIST PASSING IN");
-          console.log(speechList);
           if (containsWords(speechList,colorNames)){
-            console.log("CONTAINS COLOR");
             //Identify which color has been said last
             var targetColor;
             speechList.map(function(item){
@@ -535,9 +476,6 @@ recognizer.onresult = function(event) {
               thereTime = speechList[word];
             }
           });
-          // var therePosition1 = getPositionFromTime(frameQueue,thereTime+500);
-          // $(".thereDot").css("top",therePosition1.y);
-          // $(".thereDot").css("left",therePosition1.x);
 
           //Create new tree object
            if (containsWords(speechList,["tree","petri","peachtree"]) && (containsWords(speechList,soundsLikeThere)) || containsWord(speechList,"poetry")){
@@ -561,11 +499,9 @@ recognizer.onresult = function(event) {
               var therePosition = getPositionFromTime(frameQueue,thereTime);
               makeNewCloud(therePosition);
            }
-        // } //End of if say put, but, make
 
         //PUT THAT THERE CODE: Moves existing object to a new location
         if (containsWords(speechList,soundsLikeThere)){
-              console.log("entering PUT THAT THERE CODE");
               if (selectedElement != null){
                 //Element is a tree
                 if($(selectedElement).hasClass("tree")){
@@ -602,23 +538,16 @@ recognizer.onresult = function(event) {
 
         var thisPhrase = event.results[i][0].transcript;
         var phraseWords = thisPhrase.split(' ');
-        console.log(phraseWords);
 
         //Iterate through each word said
         for (var j = 0; j<phraseWords.length; j++){
-          console.log('iterating through phraseWords');
           word = phraseWords[j].toLowerCase();
           //Check if there is a match
-          console.log(vocab.indexOf(word));
-          console.log(vocab);
-
           //Word is recognized in the existing vocabulary
           if (vocab.indexOf(word) >= 0){
-            console.log("WORD EXISTS IN DICTIONARY");
             //This is the first instance of the word in the given context
             if (!containsWord(speechList,word)){
                speechList.push([word,time]);
-               console.log("PUSHING TO SPEECH LIST");
               //SPECIAL CASE: word we said is "that", in this case we want to instantly highlight
               if( word == "that" || word == "this" || word =="select"){
                 var thatPosition = getPositionFromTime(frameQueue,time);
@@ -684,7 +613,6 @@ recognizer.onresult = function(event) {
     for (var i = event.resultIndex; i < event.results.length; ++i) {
       if (event.results[i].isFinal) {
         final_transcript += event.results[i][0].transcript;
-        //$(".recentSpeech").html(final_transcript);
         if(gameStarted==true){
           $(".speechBar").html("<b>What we think you said:<br></b>"+final_transcript);
         }
