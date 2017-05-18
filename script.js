@@ -12,9 +12,16 @@ var firstTimestamp;
 var cursorPosition = {x:0,y:0};
 
 var horizonLine = 380;
+var groundHeight = 350;
 
 $(document).ready(function(){
   $(".horizon-line").css("top",horizonLine+"px");
+  horizonLine = $("body").height()-groundHeight;
+  console.log("Horizon line now:"+horizonLine);
+  $( window ).resize(function() {
+    horizonLine = $("body").height()-groundHeight;
+    console.log("Horizon line now:"+horizonLine);
+  });
 });
 
 
@@ -35,7 +42,17 @@ moveImg.src = "move-icon.png";
 //Color name is string of target color you want to change to "yellow", etc.
 var changeBrushColor = function(colorName){
   currentColor = colorName;
+  
+  $(".palette-color").removeClass("hover");
+  $(".palette-color."+currentColor).addClass("hover");
+
+  console.log("New items will be painted "+currentColor);
+  $(".color-change").css("opacity",1);
+  $(".color-change").html("New items will be painted "+currentColor);
   $("#leapCursor").css("background-color",colorPalette[colorName]);
+
+
+  setTimeout(function(){ $(".color-change").css("opacity",0); }, 2000);
 
 }
 
@@ -165,15 +182,11 @@ Leap.loop({ frame: function(frame) {
 
             var currentClass = $(hoverColor).attr("class");
             var classes = currentClass.split(" ");
-            console.log(classes);
-            // var newClass;
             if (classes.length == 3){
               var color = classes[1];
-              // newClass = "."+classes[0]+"."+color+".big";
               changeBrushColor(color);
             }
-            // $(newClass).addClass('show');
-            // console.log("NEW CLASS"+ newClass);
+
           } else{
             // $(".palette-color").removeClass("show");
           }
@@ -200,7 +213,7 @@ recognizer.lang = "en";
 recognizer.continuous = true;
 recognizer.interimResults = true;
 recognizer.start();
-var vocab = ["delete","exit","close","help","put","select","Peachtree","petri","air","this","fair","move","make","paint","mountain","intermountain","tree","there","here","poetry","but",'that','bear','cloud','iCloud','McCloud','crowd','cloudy','clown','start',"red","orange","yellow","green","blue","purple","violet","brown","white","black"];
+var vocab = ["mystic","mistake","mistakes","erase","remove","delete","exit","close","help","put","select","Peachtree","petri","air","this","fair","move","make","paint","mountain","intermountain","tree","there","here","poetry","but",'that','bear','cloud','iCloud','McCloud','crowd','cloudy','clown','start',"red","orange","yellow","green","blue","purple","violet","brown","white","black"];
 var soundsLikeThere = ["there","here","bear","trailer","fair","hair","air"];
 var colorPalette = {
       "red": "#A3334A",
@@ -319,7 +332,7 @@ var makeNewTree = function(position){
       $(containingDiv).append(treeImg);
       $(".wrapper").append(containingDiv);
       console.log("PUT A TREE THERE");
-
+      randomBrushAudio();
       if(introState ==2){
             introState++;
             //$(".bottomWrapper").hide();
@@ -360,9 +373,11 @@ var makeNewMountain = function(position){
     }
     mountainImg.src = assets.mountain.src;
     containingDiv.style.left = position.x-assets.mountain.width/2+"px";
-    containingDiv.style.top = "250px";
+    containingDiv.style.top = horizonLine-assets.mountain.height+40;
     $(containingDiv).append(mountainImg);
     $(".wrapper").append(containingDiv);
+    playAudio("mountainAudio");
+    randomBrushAudio();
 
 };
 
@@ -400,6 +415,7 @@ var makeNewCloud = function(position){
               $(".palette").fadeIn(2000);
              }, 4000);
           }
+          randomBrushAudio();
     } else {
       $(".bobText").html("Why don't you try painting the cloud in the sky?");
       $(".bottomWrapper").removeClass("hidden");
@@ -411,8 +427,36 @@ var makeNewCloud = function(position){
       },2000);
     }
 
+
 };
 
+
+var playAudio = function(audioID){
+  console.log("PLAY AUDIO FUNCTION");
+  recognizer.stop();
+  document.getElementById(audioID).play();
+  $("#"+audioID).bind("ended", function(){
+    recognizer.start();       
+});
+
+};
+
+var randomBrushAudio = function(){
+   //recognizer.stop();
+  var num = Math.floor(Math.random() * 3) + 1 ;
+  playAudio("brushAudio"+num);
+  // $("#brushAudio"+num).bind("ended", function(){
+  //    recognizer.start();       
+  // });
+};
+
+// var playMountainAudio = function(){
+
+// }
+
+// var mountainAudio = function(){
+
+// }
 
 
 recognizer.onresult = function(event) {
@@ -439,6 +483,26 @@ recognizer.onresult = function(event) {
         // if (containsWord(speechList,"put") || containsWord(speechList,"but")|| containsWord(speechList,"make") || containsWord(speechList,"paint")  || containsWord(speechList,"poetry")){
 
 
+          
+          //Mistake audio
+          if (containsWords(speechList,["mistake","mistakes","mystic"])){
+            //Mistake audio
+            // document.getElementById("mistakeAudio").play();
+            console.log("MISTAKE!!!!");
+            
+            //TRIGGER RANDOM ITEM GENERATION
+            var thisPosition = getPositionFromTime(frameQueue,time);
+            var num = Math.floor(Math.random()*2) + 1 ;
+            console.log("MISTAKE NUM"+num);
+            var displace = Math.floor(Math.random()*200)+70;
+            if (num == 1){
+              makeNewTree({x:thisPosition.x,y:horizonLine+displace});
+            } else if (num == 2){
+              makeNewCloud({x:thisPosition.x,y:horizonLine-displace});
+            }
+            playAudio("mistakeAudio");
+
+          }
           //Toggle help popup
           if (containsWord(speechList,"help")){
             $(".help-popup").show();
@@ -471,9 +535,9 @@ recognizer.onresult = function(event) {
               thereTime = speechList[word];
             }
           });
-          var therePosition1 = getPositionFromTime(frameQueue,thereTime+500);
-          $(".thereDot").css("top",therePosition1.y);
-          $(".thereDot").css("left",therePosition1.x);
+          // var therePosition1 = getPositionFromTime(frameQueue,thereTime+500);
+          // $(".thereDot").css("top",therePosition1.y);
+          // $(".thereDot").css("left",therePosition1.x);
 
           //Create new tree object
            if (containsWords(speechList,["tree","petri","peachtree"]) && (containsWords(speechList,soundsLikeThere)) || containsWord(speechList,"poetry")){
@@ -589,6 +653,22 @@ recognizer.onresult = function(event) {
                     $(selectedElement).addClass("movable");
                 }
 
+              }
+              //DELETE over selected element
+              if (word =="delete"||word =="erase"||word=="remove"){
+                  //Iterate through existing painting elements
+                  var deletePosition = getPositionFromTime(frameQueue,time);
+                  var elements = $(".element");
+                  var elementToDelete;
+                  $(elements).each(function(index){
+                    var thisElement = elements[index];
+                    var divRect = $(thisElement).offset();
+                    if(deletePosition.x>= divRect.left && deletePosition.x <= divRect.left+$(thisElement).width() &&
+                        deletePosition.y >= divRect.top && deletePosition.y <= divRect.top+$(thisElement).height() ){
+                      elementToDelete = thisElement;
+                    }
+                  });
+                  $(elementToDelete).fadeOut();
               }
             }
             

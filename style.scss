@@ -10,6 +10,9 @@
 
       $helpbackground: #231D2D;
       $helpaccent: #8D7D99;
+      body{
+        font-family: Avenir;
+      }
       #leapCursor{
         width:28px;
         height:28px;
@@ -146,10 +149,12 @@
       }
 
       .ground{
-      	z-index:2;
-        background-position: center;
-        background-position: center bottom;
-        background-size: cover
+      z-index: 2;
+      background-position: center;
+      background-position: center bottom;
+      background-size: 100% 350px;
+      background-repeat: no-repeat;
+
       }
       .sky{
       	z-index:-2;
@@ -258,7 +263,7 @@
 
       }
       .tree.green.highlighted{
-
+        filter:  drop-shadow(0px 0px 10px yellow);
       }
       .tree.blue{
         filter: saturate(100%) brightness(100%) hue-rotate(453deg);
@@ -273,16 +278,16 @@
         filter: saturate(100%) brightness(100%) hue-rotate(537deg) drop-shadow(0px 0px 10px yellow);
       }
       .tree.brown{
-
+        filter: brightness(90%) hue-rotate(280deg) grayscale(30%);
       }
       .tree.brown.highlighted{
-
+        filter: brightness(90%) hue-rotate(280deg) grayscale(30%)  drop-shadow(0px 0px 10px yellow);
       }
       .tree.white{
-
+        filter: brightness(300%) grayscale(70%);
       }
       .tree.white.highlighted{
-
+        filter: brightness(300%) grayscale(70%);
       }
       .tree.black{
             filter: saturate(100%) sepia(40%) brightness(40%);
@@ -291,58 +296,58 @@
             filter: saturate(100%) sepia(40%) brightness(40%) drop-shadow(0px 0px 10px yellow);
       }
       .cloud.red{
-
+            filter: hue-rotate(154deg);
       }
       .cloud.red.highlighted{
-
+          filter: hue-rotate(154deg);
       }
       .cloud.orange{
-
+            filter: hue-rotate(186deg);
       }
       .cloud.orange.highlighted{
-
+          filter: hue-rotate(186deg) drop-shadow(0px 0px 10px yellow);
       }
       .cloud.yellow{
-
+            filter: hue-rotate(216deg);
       }
       .cloud.yellow.highlighted{
-
+          filter: hue-rotate(216deg) drop-shadow(0px 0px 10px yellow);
       }
       .cloud.green{
-
+            filter: hue-rotate(317deg);
       }
       .cloud.green.highlighted{
-
+          filter: hue-rotate(317deg) drop-shadow(0px 0px 10px yellow);
       }
       .cloud.blue{
 
       }
       .cloud.blue.highlighted{
-
+        filter: drop-shadow(0px 0px 10px yellow);
       }
       .cloud.purple{
-
+            filter: hue-rotate(96deg);
       }
       .cloud.purple.highlighted{
-
+        filter: hue-rotate(96deg) drop-shadow(0px 0px 10px yellow);
       }
       .cloud.white{
-
+            filter: brightness(200%);
       }
       .cloud.white.highlighted{
-
+        filter: brightness(200%) drop-shadow(0px 0px 10px yellow);
       }
       .cloud.brown{
-
+            filter: brightness(90%) hue-rotate(181deg);
       }
       .cloud.brown.highlighted{
-
+        filter: brightness(90%) hue-rotate(181deg) drop-shadow(0px 0px 10px yellow);
       }
       .cloud.black{
-
+            filter: brightness(40%);
       }
       .cloud.black.highlighted{
-
+        filter: brightness(40%) drop-shadow(0px 0px 10px yellow);
       }
 
 
@@ -397,7 +402,21 @@
         width:1000px;
         position:absolute;
       }*/
+.color-change{
+bottom: 29px;
+    background-color: rgba(0, 0, 0, 0.53);
+    width: 340px;
+    border-radius: 5px;
+    /* padding: 3px 5px; */
+    position: relative;
+    margin: auto;
+    color: white;
+    opacity:0;
+    transition:2s all;
 
+
+
+}
       .palette-color {
     width: 80px;
 
@@ -405,15 +424,16 @@
     height: 106px;
     /* background-color: grey; */
     /* position: absolute; */
-    margin: 0px 2px;
+    margin: 0px 5px;
     border-radius: 100px;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.55);
-    margin-top: 18px;
+    margin-top: 5px;
     /*transition: .6s all;*/
         }
-        .palette-color:hover{
-          width:60px;
-          border:solid 2px white;
+        .palette-color.hover{
+          width:80px;
+          border:solid 10px white;
+          margin:-10px 0px -5px;
 
         }
 /*        .palette-color.big{
@@ -427,12 +447,12 @@
         }*/
       .palette{
     display: none;
-    width: 900px;
+    width: 1000px;
     height: 94px;
     background-size: 100%;
     background-repeat: no-repeat;
     position: absolute;
-    bottom: -40px;
+    bottom: -30px;
     /* right: 190px; */
     left: 0px;
     right: 0px;
@@ -496,14 +516,12 @@ background-color:$black;
     bottom: 4px;*/
         }
       }
-      .palette.hover{
+/*      .palette.hover{
         bottom:-25px;
       }
+*/
 
 
-        .palette-color.hover{
-          border: solid 3px white;
-        }
       .bottomWrapper{
     background-color: #231D2D;
     /*background-color: rgb(134, 158, 136);*/
